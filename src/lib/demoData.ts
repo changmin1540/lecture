@@ -38,6 +38,13 @@ export const demoTests: TestSession[] = [
     curveData: generateCurve(1250, 15, 60),
     aiSummary: "Baseline performance achieved. Pressure rise rate matches theoretical model for Rev.A components.",
     isOutlier: false,
+    materialSpecs: {
+      primaryCharge: "ZPP (Zirconium Potassium Perchlorate)",
+      primaryWeight: 240,
+      secondaryCharge: "BKNO3 (Boron Potassium Nitrate)",
+      secondaryWeight: 150,
+      initiatorType: "Bridge-wire Igniter"
+    },
     createdAt: new Date().toISOString()
   },
   {
@@ -54,6 +61,13 @@ export const demoTests: TestSession[] = [
     curveData: generateCurve(1380, 13, 60),
     aiSummary: "Revision B shows 10.4% increase in peak pressure and 16.7% faster activation. Performance is stable and exceeds design requirements.",
     isOutlier: false,
+    materialSpecs: {
+      primaryCharge: "ZPP (Zirconium Potassium Perchlorate)",
+      primaryWeight: 265,
+      secondaryCharge: "BKNO3 (Boron Potassium Nitrate)",
+      secondaryWeight: 160,
+      initiatorType: "Bridge-wire Igniter"
+    },
     createdAt: new Date().toISOString()
   },
   {
@@ -70,6 +84,13 @@ export const demoTests: TestSession[] = [
     curveData: generateCurve(1520, 11, 60),
     aiSummary: "Pressure spike detected under high-temperature conditions. Value is 21% higher than baseline, requiring verification of structural margins.",
     isOutlier: true,
+    materialSpecs: {
+      primaryCharge: "ZPP (Zirconium Potassium Perchlorate)",
+      primaryWeight: 265,
+      secondaryCharge: "BKNO3 (Boron Potassium Nitrate)",
+      secondaryWeight: 160,
+      initiatorType: "Bridge-wire Igniter"
+    },
     createdAt: new Date().toISOString()
   }
 ];

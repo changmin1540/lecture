@@ -33,6 +33,13 @@ export interface TestSession {
   curveData: DataPoint[];
   aiSummary?: string;
   isOutlier?: boolean;
+  materialSpecs?: {
+    primaryCharge: string;
+    primaryWeight: number; // mg
+    secondaryCharge?: string;
+    secondaryWeight?: number; // mg
+    initiatorType: string;
+  };
   createdAt: string;
   ownerId: string;
 }

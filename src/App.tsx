@@ -8,6 +8,7 @@ import { Sidebar } from './components/Sidebar';
 import { ComparisonView } from './components/ComparisonView';
 import { UploadModal } from './components/UploadModal';
 import { ProjectModal } from './components/ProjectModal';
+import { TechnicalInsights } from './components/TechnicalInsights';
 import { storage } from './lib/storage';
 import { Project, TestSession } from './types';
 import { 
@@ -204,8 +205,9 @@ export default function App() {
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                        <div className="xl:col-span-2">
+                        <div className="xl:col-span-2 space-y-8">
                           <ComparisonView selectedTests={testComparisonData} />
+                          <TechnicalInsights selectedTests={testComparisonData} />
                         </div>
                         
                         <div className="space-y-6">
