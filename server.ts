@@ -46,26 +46,25 @@ app.post("/api/analyze-test", async (req, res) => {
       3. Calculate delta changes if comparison data is provided.
     `;
 
-    const response = await ai.getGenerativeModel({
-      model: "gemini-1.5-flash",
-    }).generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents: prompt,
+      config: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
             summary: { type: Type.STRING },
             isOutlier: { type: Type.BOOLEAN },
-            deltaPressure: { type: Type.NUMBER }, // percentage
-            deltaActivation: { type: Type.NUMBER }, // percentage
+            deltaPressure: { type: Type.NUMBER },
+            deltaActivation: { type: Type.NUMBER },
           },
           required: ["summary", "isOutlier"]
         }
       }
     });
 
-    const text = response.response.text();
+    const text = response.text;
     res.json(JSON.parse(text || "{}"));
   } catch (error) {
     console.error("AI Analysis Error:", error);

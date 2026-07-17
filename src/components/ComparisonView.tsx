@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { TestSession } from '../types';
 import { 
   LineChart, 
@@ -15,14 +15,19 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-import { Activity, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
+import { Activity, ArrowUpRight, ArrowDownRight, Minus, FileDown, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface ComparisonViewProps {
   selectedTests: TestSession[];
 }
 
 export function ComparisonView({ selectedTests }: ComparisonViewProps) {
+  const reportRef = useRef<HTMLDivElement>(null);
+  const [exporting, setExporting] = React.useState(false);
+
   const chartData = useMemo(() => {
     if (selectedTests.length === 0) return [];
 
@@ -61,6 +66,30 @@ export function ComparisonView({ selectedTests }: ComparisonViewProps) {
     };
   }, [selectedTests]);
 
+  const handleExportPDF = async () => {
+    if (!reportRef.current) return;
+    setExporting(true);
+    try {
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#F8F9FA'
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Pyro-Report-${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (err) {
+      console.error('PDF Export failed:', err);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   if (selectedTests.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-slate-200 rounded-xl bg-white/50 text-slate-400">
@@ -72,40 +101,52 @@ export function ComparisonView({ selectedTests }: ComparisonViewProps) {
 
   return (
     <div className="space-y-6">
-      {/* Graph Area */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-display font-bold text-slate-900 flex items-center gap-2">
-            Pressure-Time Curve Overlay
-          </h3>
-          <div className="flex gap-2">
-            {selectedTests.map((test, i) => (
-              <div key={test.id} className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-medium">
-                <div 
-                  className="w-2 h-2 rounded-full" 
-                  style={{ backgroundColor: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'][i % 4] }} 
-                />
-                {test.revision} ({test.condition})
-              </div>
-            ))}
+      <div className="flex justify-end">
+        <button 
+          onClick={handleExportPDF}
+          disabled={exporting}
+          className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-sm hover:bg-slate-800 transition-all disabled:opacity-50"
+        >
+          {exporting ? <Loader2 size={14} className="animate-spin" /> : <FileDown size={14} />}
+          Export Report (PDF)
+        </button>
+      </div>
+
+      <div ref={reportRef} className="space-y-6 p-1">
+        {/* Graph Area */}
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-display font-bold text-slate-900 flex items-center gap-2">
+              Pressure-Time Curve Overlay
+            </h3>
+            <div className="flex gap-2">
+              {selectedTests.map((test, i) => (
+                <div key={test.id} className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-medium">
+                  <div 
+                    className="w-2 h-2 rounded-full" 
+                    style={{ backgroundColor: ['#F37321', '#1C1C1C', '#0067B2', '#f59e0b'][i % 4] }} 
+                  />
+                  {test.revision} ({test.condition})
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-        
-        <div className="h-[400px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-              <XAxis 
-                dataKey="t" 
-                label={{ value: 'Time (ms)', position: 'insideBottomRight', offset: -10, fontSize: 12 }} 
-                fontSize={12}
-                tick={{ fill: '#64748b' }}
-              />
-              <YAxis 
-                label={{ value: 'Pressure (psi)', angle: -90, position: 'insideLeft', fontSize: 12 }} 
-                fontSize={12}
-                tick={{ fill: '#64748b' }}
-              />
+          
+          <div className="h-[480px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis 
+                  dataKey="t" 
+                  label={{ value: 'Time (ms)', position: 'insideBottom', offset: -10, fontSize: 12 }} 
+                  fontSize={12}
+                  tick={{ fill: '#64748b' }}
+                />
+                <YAxis 
+                  label={{ value: 'Pressure (psi)', angle: -90, position: 'insideLeft', fontSize: 12 }} 
+                  fontSize={12}
+                  tick={{ fill: '#64748b' }}
+                />
               <Tooltip 
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
               />
@@ -116,7 +157,7 @@ export function ComparisonView({ selectedTests }: ComparisonViewProps) {
                   type="monotone"
                   dataKey={`${test.revision}_${test.condition}`}
                   name={`${test.revision} (${test.condition})`}
-                  stroke={['#3b82f6', '#ef4444', '#10b981', '#f59e0b'][i % 4]}
+                  stroke={['#F37321', '#1C1C1C', '#0067B2', '#f59e0b'][i % 4]}
                   strokeWidth={2}
                   dot={false}
                   activeDot={{ r: 4 }}
@@ -140,7 +181,7 @@ export function ComparisonView({ selectedTests }: ComparisonViewProps) {
               </div>
               <div className={cn(
                 "flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold",
-                stats.deltaP > 0 ? "text-blue-600 bg-blue-50" : stats.deltaP < 0 ? "text-red-600 bg-red-50" : "text-slate-600 bg-slate-50"
+                stats.deltaP > 0 ? "text-hanwha bg-hanwha/10" : stats.deltaP < 0 ? "text-red-600 bg-red-50" : "text-slate-600 bg-slate-50"
               )}>
                 {stats.deltaP > 0 ? <ArrowUpRight size={16} /> : stats.deltaP < 0 ? <ArrowDownRight size={16} /> : <Minus size={16} />}
                 {Math.abs(stats.deltaP).toFixed(1)}%
@@ -166,6 +207,7 @@ export function ComparisonView({ selectedTests }: ComparisonViewProps) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

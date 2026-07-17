@@ -38,7 +38,7 @@ export function UploadModal({ projectId, onClose, onSuccess }: UploadModalProps)
       'text/csv': ['.csv']
     },
     multiple: false
-  });
+  } as any);
 
   const parseFile = async (file: File) => {
     setParsing(true);
@@ -141,12 +141,12 @@ export function UploadModal({ projectId, onClose, onSuccess }: UploadModalProps)
             <div 
               {...getRootProps()} 
               className={cn(
-                "border-2 border-dashed rounded-xl p-12 text-center transition-all cursor-pointer",
-                isDragActive ? "border-blue-500 bg-blue-50/50" : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                "border-2 border-dashed rounded-sm p-12 text-center transition-all cursor-pointer",
+                isDragActive ? "border-hanwha bg-hanwha/5" : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
               )}
             >
               <input {...getInputProps()} />
-              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-hanwha/10 text-hanwha rounded-sm flex items-center justify-center mx-auto mb-4">
                 <Upload size={24} />
               </div>
               <p className="text-sm font-semibold text-slate-900">Drag & drop raw data file</p>
@@ -227,7 +227,7 @@ export function UploadModal({ projectId, onClose, onSuccess }: UploadModalProps)
           <button 
             disabled={!extractedData || parsing || analyzing}
             onClick={handleSave}
-            className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md flex items-center gap-2"
+            className="px-6 py-2 bg-hanwha text-white text-sm font-bold rounded-sm hover:bg-[#e66a1a] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md flex items-center gap-2"
           >
             {analyzing ? (
               <>

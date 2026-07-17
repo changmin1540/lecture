@@ -24,14 +24,14 @@ export function Sidebar({
   onDeleteProject 
 }: SidebarProps) {
   return (
-    <div className="w-64 bg-slate-900 text-slate-300 h-screen flex flex-col border-r border-slate-800">
-      <div className="p-6">
+    <div className="w-64 bg-charcoal text-slate-300 h-screen flex flex-col border-r border-charcoal">
+      <div className="p-6 border-b border-white/5">
         <h1 className="text-xl font-display font-bold text-white tracking-tight flex items-center gap-2">
-          <div className="w-2 h-6 bg-blue-500 rounded-full" />
-          Pyro-Data
+          <div className="w-2 h-6 bg-hanwha rounded-sm" />
+          Hanwha <span className="font-light opacity-60">Pyro</span>
         </h1>
-        <p className="text-[10px] uppercase tracking-widest text-slate-500 mt-1 font-mono font-bold">
-          Insight Engine v1.0
+        <p className="text-[9px] uppercase tracking-[0.2em] text-hanwha mt-1 font-mono font-bold">
+          Precision Insight Engine
         </p>
       </div>
 
@@ -51,10 +51,10 @@ export function Sidebar({
             <div 
               key={project.id}
               className={cn(
-                "group flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all",
+                "group flex items-center justify-between px-3 py-2.5 rounded-sm cursor-pointer transition-all mx-2 mb-1",
                 selectedProjectId === project.id 
-                  ? "bg-blue-600/10 text-blue-400 ring-1 ring-blue-500/50" 
-                  : "hover:bg-slate-800 text-slate-400"
+                  ? "bg-hanwha text-white" 
+                  : "hover:bg-white/5 text-slate-400"
               )}
               onClick={() => onSelectProject(project.id)}
             >
@@ -75,8 +75,14 @@ export function Sidebar({
           ))}
           
           {projects.length === 0 && (
-            <div className="text-center py-8 text-slate-600">
-              <p className="text-xs italic">No projects yet</p>
+            <div className="text-center py-8 px-4">
+              <p className="text-xs italic text-slate-600 mb-4">No projects yet</p>
+              <button 
+                onClick={onAddProject}
+                className="w-full py-2 bg-white/5 border border-white/10 text-slate-300 text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-white/10 transition-all mb-2"
+              >
+                Create New
+              </button>
             </div>
           )}
         </div>
