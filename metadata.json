@@ -1,0 +1,8 @@
+{
+  "name": "Pyro-Data Insight",
+  "description": "Integrated management and AI analysis system for pyro-device test data, featuring automated ingestion, P-t curve comparison, and AI-driven performance insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

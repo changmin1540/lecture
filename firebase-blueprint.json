@@ -1,0 +1,58 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A pyro-device development project",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Project name (e.g., K-Model X)" },
+        "description": { "type": "string", "description": "Project description" },
+        "createdBy": { "type": "string", "description": "Researcher UID" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "createdBy", "createdAt"]
+    },
+    "TestSession": {
+      "title": "Test Session",
+      "description": "A single performance test run",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string", "description": "ID of the parent project" },
+        "revision": { "type": "string", "description": "Design revision (e.g., Rev.A)" },
+        "condition": { "type": "string", "description": "Test condition: Ambient, High, Low", "enum": ["Ambient", "High", "Low"] },
+        "researcher": { "type": "string", "description": "Name of the researcher" },
+        "testDate": { "type": "string", "format": "date-time" },
+        "maxPressure": { "type": "number", "description": "Peak pressure reached (psi/bar)" },
+        "activationTime": { "type": "number", "description": "Time to activate (ms)" },
+        "status": { "type": "string", "enum": ["Pending", "Approved", "Flagged"] },
+        "curveData": { 
+          "type": "array", 
+          "items": {
+            "type": "object",
+            "properties": {
+              "t": { "type": "number" },
+              "p": { "type": "number" }
+            }
+          },
+          "description": "Sampled P-t curve data for visualization" 
+        },
+        "aiSummary": { "type": "string", "description": "AI generated summary of this test" },
+        "isOutlier": { "type": "boolean", "description": "Whether AI flagged this as an outlier" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["projectId", "revision", "condition", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Collection of pyro projects"
+    },
+    "/projects/{projectId}/tests/{testId}": {
+      "schema": "TestSession",
+      "description": "Individual test results for a project"
+    }
+  }
+}
